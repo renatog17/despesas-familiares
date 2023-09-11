@@ -7,16 +7,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.example.despesasfamiliares.controller.dto.CreateReceitaDTO;
-import com.example.despesasfamiliares.controller.dto.ReadReceitaDTO;
+import com.example.despesasfamiliares.controller.dto.despesa.ReadDespesaDTO;
+import com.example.despesasfamiliares.controller.dto.receita.CreateReceitaDTO;
+import com.example.despesasfamiliares.controller.dto.receita.ReadReceitaDTO;
+import com.example.despesasfamiliares.controller.dto.receita.UpdateReceitaDTO;
 import com.example.despesasfamiliares.controller.exceptionhandler.RegistroDuplicadoException;
 import com.example.despesasfamiliares.domain.Receita;
 import com.example.despesasfamiliares.repositorie.ReceitaRepository;
@@ -59,9 +64,28 @@ public class ReceitaController {
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getReceita(@PathVariable Long id){
-		System.out.println("aqui");
 		Receita receita = receitaRepository.getReferenceById(id);
 		return ResponseEntity.ok(new ReadReceitaDTO(receita));
 	}
+	@GetMapping("/lista")
+	public ResponseEntity<?> getReceitas(@RequestParam String descricao) {
+		List<ReadReceitaDTO> receitasDto = receitaRepository.findByDescricao(descricao).stream().map(receita -> {
+			ReadReceitaDTO receitaDto = new ReadReceitaDTO(receita);
+			return receitaDto;
+		}).toList();
+		return ResponseEntity.ok(receitasDto);
+	}
 	
+	@PutMapping("/{id}")
+	@Transactional
+	public ResponseEntity<?> putReceita(@PathVariable Long id, @RequestBody UpdateReceitaDTO receitaDto){
+		Receita receita = receitaRepository.getReferenceById(id);
+		receita.update(receitaDto);
+		return ResponseEntity.ok(new ReadReceitaDTO(receita));
+	}
+	@DeleteMapping("/{id}")
+	@Transactional
+	public void deleteReceita(@PathVariable Long id) {
+		receitaRepository.deleteById(id);
+	}
 }

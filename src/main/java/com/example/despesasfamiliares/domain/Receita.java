@@ -3,13 +3,15 @@ package com.example.despesasfamiliares.domain;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import com.example.despesasfamiliares.controller.dto.CreateReceitaDTO;
+import com.example.despesasfamiliares.controller.dto.receita.CreateReceitaDTO;
+import com.example.despesasfamiliares.controller.dto.receita.UpdateReceitaDTO;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
 
 @Entity
 @Table(name = "receitas")
@@ -70,6 +72,15 @@ public class Receita {
 			return false;
 		Receita other = (Receita) obj;
 		return Objects.equals(id, other.id);
+	}
+
+	public void update(@Valid UpdateReceitaDTO receitaDto) {
+		if(receitaDto.descricao()!=null)
+			this.descricao = receitaDto.descricao();
+		if(receitaDto.valor()!=null)
+			this.valor = receitaDto.valor();
+		if(receitaDto.data()!=null)
+			this.data = receitaDto.data();
 	}
 
 	

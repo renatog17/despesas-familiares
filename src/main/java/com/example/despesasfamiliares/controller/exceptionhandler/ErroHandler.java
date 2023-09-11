@@ -50,4 +50,10 @@ public class ErroHandler {
 		ErrorResponse error = new ErrorResponse("Entidade não encontrada.", HttpStatusCode.valueOf(400), "400");
 		return ResponseEntity.badRequest().body(error);
 	}
+	
+//	@ExceptionHandler(IllegalArgumentException.class)
+//	public ResponseEntity<?> tratarErroCategoriaInvalida(IllegalArgumentException exception) {
+//		ErrorResponse error = new ErrorResponse("Categoria não encontrada. Parâmetros aceitos para categoria: 'ALIMENTACAO, SAUDE, TRANSPORTE, EDUCAOCAO, LAZER, IMPREVISTOS, OUTROS'", HttpStatusCode.valueOf(400), "400");
+//		return ResponseEntity.badRequest().body(error);
+//	}
 }
