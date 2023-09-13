@@ -1,6 +1,7 @@
 package com.example.despesasfamiliares.controller;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +19,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.example.despesasfamiliares.controller.dto.despesa.ReadDespesaDTO;
 import com.example.despesasfamiliares.controller.dto.receita.CreateReceitaDTO;
 import com.example.despesasfamiliares.controller.dto.receita.ReadReceitaDTO;
 import com.example.despesasfamiliares.controller.dto.receita.UpdateReceitaDTO;
 import com.example.despesasfamiliares.controller.exceptionhandler.RegistroDuplicadoException;
 import com.example.despesasfamiliares.domain.Receita;
-import com.example.despesasfamiliares.repositorie.ReceitaRepository;
+import com.example.despesasfamiliares.repository.ReceitaRepository;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -70,6 +70,17 @@ public class ReceitaController {
 	@GetMapping("/lista")
 	public ResponseEntity<?> getReceitas(@RequestParam String descricao) {
 		List<ReadReceitaDTO> receitasDto = receitaRepository.findByDescricao(descricao).stream().map(receita -> {
+			ReadReceitaDTO receitaDto = new ReadReceitaDTO(receita);
+			return receitaDto;
+		}).toList();
+		return ResponseEntity.ok(receitasDto);
+	}
+	
+	@GetMapping("/{ano}/{mes}")
+	public ResponseEntity<?> getReceitasPorData(@PathVariable Integer ano, @PathVariable Integer mes){
+		LocalDate dataInicio = LocalDate.of(ano, mes, 1);
+		LocalDate dataFim = dataInicio.plusMonths(1).minusDays(1);
+		List<ReadReceitaDTO> receitasDto = receitaRepository.findByDataBetween(dataInicio, dataFim).stream().map(receita -> {
 			ReadReceitaDTO receitaDto = new ReadReceitaDTO(receita);
 			return receitaDto;
 		}).toList();

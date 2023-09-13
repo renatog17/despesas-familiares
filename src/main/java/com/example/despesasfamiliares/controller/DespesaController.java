@@ -1,6 +1,7 @@
 package com.example.despesasfamiliares.controller;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.example.despesasfamiliares.controller.dto.despesa.CreateDespesaDTO;
 import com.example.despesasfamiliares.controller.dto.despesa.ReadDespesaDTO;
 import com.example.despesasfamiliares.controller.dto.despesa.UpdateDespesaDTO;
+import com.example.despesasfamiliares.controller.dto.receita.ReadReceitaDTO;
 import com.example.despesasfamiliares.controller.exceptionhandler.RegistroDuplicadoException;
 import com.example.despesasfamiliares.domain.Despesa;
 import com.example.despesasfamiliares.repository.DespesaRepository;
@@ -56,7 +58,6 @@ public class DespesaController {
 			ReadDespesaDTO despesaDto = new ReadDespesaDTO(despesa);
 			return despesaDto;
 		}).toList();
-		System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAa");
 		return ResponseEntity.ok(despesasDto);
 	}
 
@@ -69,6 +70,17 @@ public class DespesaController {
 	@GetMapping("/lista")
 	public ResponseEntity<?> getdespesas(@RequestParam String descricao) {
 		List<ReadDespesaDTO> despesasDto = despesaRepository.findByDescricao(descricao).stream().map(despesa -> {
+			ReadDespesaDTO despesaDto = new ReadDespesaDTO(despesa);
+			return despesaDto;
+		}).toList();
+		return ResponseEntity.ok(despesasDto);
+	}
+	
+	@GetMapping("/{ano}/{mes}")
+	public ResponseEntity<?> getReceitasPorData(@PathVariable Integer ano, @PathVariable Integer mes){
+		LocalDate dataInicio = LocalDate.of(ano, mes, 1);
+		LocalDate dataFim = dataInicio.plusMonths(1).minusDays(1);
+		List<ReadDespesaDTO> despesasDto = despesaRepository.findByDataBetween(dataInicio, dataFim).stream().map(despesa -> {
 			ReadDespesaDTO despesaDto = new ReadDespesaDTO(despesa);
 			return despesaDto;
 		}).toList();
